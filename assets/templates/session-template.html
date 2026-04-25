@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сессия #2: Компетенции и вектор</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #17181C;
+    --surface: #22252A;
+    --surface-hover: #2A2D34;
+    --border: rgba(255,255,255,0.10);
+    --border-hover: rgba(255,255,255,0.18);
+    --text: #EAE7E0;
+    --text-dim: #A8A49C;
+    --text-muted: #7D7972;
+    --accent: #D4A955;
+    --accent-light: rgba(212,169,85,0.12);
+    --egor: #A890C4;
+    --egor-light: rgba(168,144,196,0.14);
+    --green: #6BAF8D;
+    --green-light: rgba(107,175,141,0.12);
+    --yellow: #C4A84E;
+    --yellow-light: rgba(196,168,78,0.12);
+    --red: #D47272;
+    --red-light: rgba(212,114,114,0.12);
+    --blue: #7BA3CC;
+    --blue-light: rgba(123,163,204,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  .header {
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .session-tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1;
+  }
+
+  .meta-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--text-muted);
+  }
+
+  /* SECTIONS */
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .section-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .section-icon svg {
+    width: 18px; height: 18px;
+  }
+
+  .section-icon.green { background: var(--green-dim); }
+  .section-icon.yellow { background: var(--yellow-dim); }
+  .section-icon.red { background: var(--red-dim); }
+  .section-icon.blue { background: var(--blue-dim); }
+  .section-icon.purple { background: var(--egor-light); }
+
+  h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--border-accent);
+  }
+
+  .card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .card p:last-child { margin-bottom: 0; }
+
+  .card strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* KEY RESULTS */
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 600px) {
+    .result-grid { grid-template-columns: 1fr; }
+  }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+
+  .result-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .result-value {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  /* PROMISES TABLE */
+  .promises {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .promises thead th {
+    background: var(--surface-hover);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    padding: 14px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .promises tbody td {
+    padding: 16px 20px;
+    font-size: 14px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    vertical-align: top;
+  }
+
+  .promises tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .owner-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .owner-egor {
+    color: var(--egor);
+    background: var(--egor-light);
+  }
+
+  .owner-irina {
+    color: var(--green);
+    background: var(--green-dim);
+  }
+
+  .owner-both {
+    color: var(--yellow);
+    background: var(--yellow-dim);
+  }
+
+  /* COMPETENCY REVIEW */
+  .comp-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comp-row:first-child { padding-top: 4px; }
+  .comp-row:last-child { border-bottom: none; padding-bottom: 4px; }
+
+  .comp-name {
+    flex: 0 0 160px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .comp-note {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* QUOTE */
+  .quote {
+    border-left: 3px solid var(--egor);
+    padding: 16px 20px;
+    margin: 20px 0 0;
+    background: var(--egor-light);
+    border-radius: 0 8px 8px 0;
+  }
+
+  .quote p {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .quote .attr {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-style: normal;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 44px 0;
+  }
+
+  /* RECOMMENDATIONS */
+  .rec-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rec-item:first-child { padding-top: 4px; }
+  .rec-item:last-child { border-bottom: none; padding-bottom: 4px; }
+
+  .rec-num {
+    flex: 0 0 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--egor-light);
+    color: var(--egor);
+  }
+
+  .rec-text {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text-dim);
+    padding-top: 3px;
+  }
+
+  .rec-text strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: none;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    opacity: 0.6;
+  }
+
+  /* HIGHLIGHT */
+  .highlight {
+    color: var(--egor);
+    font-weight: 500;
+  }
+
+  .highlight-green {
+    color: var(--green);
+    font-weight: 500;
+  }
+
+  /* STATUS CHIP */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  .status.done { color: var(--green); background: var(--green-dim); }
+  .status.progress { color: var(--yellow); background: var(--yellow-dim); }
+  .status.todo { color: var(--blue); background: var(--blue-dim); }
+
+  /* ALERT */
+  .alert {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 0;
+  }
+
+  .alert + .alert {
+    margin-top: 12px;
+  }
+
+  .alert-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+
+  .alert p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  /* Links */
+  a {
+    transition: color 0.2s ease, opacity 0.2s ease;
+  }
+
+  a:hover {
+    opacity: 0.85;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Selection color */
+  ::selection {
+    background: rgba(212,169,85,0.25);
+    color: var(--text);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Header staggered entrance */
+  .header .session-tag {
+    animation: fadeIn 0.5s ease-out both;
+    animation-delay: 0.1s;
+  }
+
+  .header h1 {
+    animation: fadeUp 0.6s ease-out both;
+    animation-delay: 0.2s;
+  }
+
+  .header .meta {
+    animation: fadeIn 0.5s ease-out both;
+    animation-delay: 0.4s;
+  }
+
+  /* Scroll-triggered reveals */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Staggered children */
+  .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+
+  .reveal-stagger.visible > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0s; }
+  .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.08s; }
+  .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.16s; }
+  .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.24s; }
+  .reveal-stagger.visible > *:nth-child(5) { transition-delay: 0.32s; }
+  .reveal-stagger.visible > *:nth-child(6) { transition-delay: 0.40s; }
+  .reveal-stagger.visible > *:nth-child(7) { transition-delay: 0.48s; }
+
+  /* Subtle hover on cards */
+  .result-card,
+  .card {
+    transition: border-color 0.2s;
+  }
+
+  /* Alert subtle pulse on appear */
+  .alert {
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="session-tag">Сессия #2</div>
+    <h1>Компетенции и вектор</h1>
+    <div class="meta">
+      <div class="meta-item">Ментор: Егор</div>
+      <div class="meta-dot"></div>
+      <div class="meta-item">Менти: Анна</div>
+      <div class="meta-dot"></div>
+      <div class="meta-item">Длительность: ~2 часа</div>
+    </div>
+  </div>
+
+  <!-- KEY RESULTS -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="#6BAF8D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <h2>Ключевые результаты с прошлой сессии</h2>
+    </div>
+    <div class="result-grid reveal-stagger">
+      <div class="result-card result-card-done">
+        <div class="result-label">CJM-пилот</div>
+        <div class="result-value">Завершён <span class="status done">✓ done</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Наблюдения, гипотезы и задачи презентованы продуктовой команде и Михаилу. Разнесены по этапам воронки.</p>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Лендинг на внешку</div>
+        <div class="result-value">Запущен в прод за 2 недели <span class="status done">✓ done</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Создан совместно с продуктом в Figma Make. Закрыл гипотезы из CJM: блок безопасности, разделение продуктов, описание кейсов.</p>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Карта компетенций</div>
+        <div class="result-value">Заполнена <span class="status done">✓ done</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Анна провела самостоятельную оценку навыков — харды и софты. <a href="# (ссылка на Figma — заглушка в шаблоне)" style="color:var(--accent);text-decoration:none;">Открыть в Figma →</a></p>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Roadmap CJM</div>
+        <div class="result-value">Следующий шаг <span class="status progress">→ в работе</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Нужно закрепить карточки с гипотезами и отслеживать реализацию по продуктовым командам.</p>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Дашборд метрик</div>
+        <div class="result-value">Договорённость <span class="status todo">○ todo</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">У продуктовой команды пока нет дашборда по воронке. Договорились прикреплять скрины изменений метрик.</p>
+      </div>
+    </div>
+
+    <!-- REFLECTION BLOCK -->
+    <div class="card" style="margin-top:16px;border-color:rgba(255,217,61,0.2);background:linear-gradient(135deg, var(--surface) 0%, rgba(255,217,61,0.04) 100%);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="display:inline-flex;width:18px;height:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="#C4A84E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 00-4 12.7V17h8v-2.3A7 7 0 0012 2z"/></svg></span>
+        <span style="font-size:14px;font-weight:600;color:var(--yellow);">Рефлексия → план для нового продукта</span>
+      </div>
+      <p style="margin-bottom:12px;">На текущем продукте метрик не было с самого начала. Скоро стартует <strong>новый продукт</strong> — и это шанс заложить всё правильно с нуля. Нужно разобраться, почему так вышло в прошлый раз, и не повторить.</p>
+      
+      <p style="color:var(--text);font-weight:500;margin-bottom:8px;">Что выяснить (рефлексия по текущему продукту):</p>
+      <p>— Почему метрик не было изначально? Не хватило ресурсов аналитики, не было запроса от бизнеса, или дизайнер не настоял?</p>
+      <p>— Что нужно, чтобы к дизайнеру прислушались в вопросе метрик? Нужен ли «союзник» — продакт, аналитик?</p>
+      <p style="margin-bottom:14px;">— Или ситуация просто не дозрела — продукт был слишком ранним для замеров?</p>
+
+      <p style="color:var(--text);font-weight:500;margin-bottom:8px;">План на новый продукт (заложить метрики с первого дня):</p>
+      <p><span class="owner-tag owner-irina" style="margin-right:2px;">Анна</span> На этапе дискавери — договориться с продактом и аналитиком о базовых метриках воронки ещё до дизайна. Зафиксировать: что будем мерить, зачем, как часто.</p>
+      <p><span class="owner-tag owner-irina" style="margin-right:2px;">Анна</span> Снять «точку ноль» — скриншоты, цифры, состояние до запуска. Это основа для будущего кейса «до/после».</p>
+      <p><span class="owner-tag owner-irina" style="margin-right:2px;">Анна</span> Встроить в CJM не только путь пользователя, но и точки замера: где ставим счётчики, где собираем обратную связь (опросник в конце флоу, дневниковые исследования).</p>
+      <p><span class="owner-tag owner-egor" style="margin-right:2px;">Егор</span> Помочь сформулировать аргумент для продакта — почему метрики нужны с первого дня и как это подать, чтобы это была не «дизайнерская хотелка», а бизнес-необходимость.</p>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- COMPETENCY REVIEW -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="#A890C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+      <h2>Фокус на компетенциях</h2>
+    </div>
+
+    <div class="card" style="padding:12px 20px;">
+      <div class="comp-row">
+        <div class="comp-name">Ответственность</div>
+        <div class="comp-note">Анна поставила себе 3, Егор считает — уже 4. Синдром отличника и проблемы с дедлайнами: либо ставит невозможный срок, либо сдвигает. Нужно работать над оценкой сроков.</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-name">Управление</div>
+        <div class="comp-note">Прямых подчинённых пока нет, поэтому фокус — на управлении собой. Первые оформленные рабочие цели появились только перед ассессментом на Middle (с помощью нейронок). Направление роста: учиться декомпозировать цели, планировать день, оценивать сроки, давать себе обратную связь. Горизонтальное лидерство в CJM-проекте — это уже управленческая практика, важно осознавать это.</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-name">Аналитика / метрики</div>
+        <div class="comp-note">Навыка на уверенные 3–4 пока нет, но нашли направление, как его развивать. План: строить гипотезы перед запуском фичи и проверять их после, смотреть на аналогичные B2B-продукты и разбирать — почему они выбрали именно такие метрики, искать качественные альтернативы для малой аудитории (время на странице, снижение нагрузки на поддержку, CJM по реальному пути, дневниковые исследования), просить аналитика объяснять не только цифры, но и что за ними стоит.</div>
+      </div>
+    </div>
+
+    <div class="quote">
+      <p>«Мне бы не хотелось, чтобы мне доверяли развитие целого сервиса. У меня суперразвит синдром отличника — если пообещала, то умру, но сделаю. Но я плоха в сроках.»</p>
+      <div class="attr">— Анна, про самооценку ответственности</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- GOALS FOR SENIOR -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="#7BA3CC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      <h2>Цели на ассессмент Senior</h2>
+    </div>
+    <div class="card">
+      <p>Три направления, поставленные на ассессменте Middle:</p>
+      <p><strong>1. CJM-проекты</strong> — <span class="status done">✓ почти закрыто</span> — пилот CJM завершён, проект продолжается на год.</p>
+      <p><strong>2. AI в админку</strong> — <span class="status todo">○ todo</span> — замена ручных дизайнерских процессов генерацией. Анна называет это «самоликвидироваться».</p>
+      <p><strong>3. Единый гайд по коммуникациям</strong> — <span class="status todo">○ todo</span> — попапы, баннеры, пуши в онлайн-банке, почте и мобилке в единый формат.</p>
+    </div>
+    <div class="card">
+      <p style="color:var(--text)"><strong>Сроки ассессмента</strong></p>
+      <p>Планировался через год-полтора, но CJM развился настолько быстро, что разговор о Senior может состояться уже <strong>через ~6 месяцев</strong>.</p>
+      <p style="margin-top:10px;color:var(--text)"><strong>Что нужно:</strong></p>
+      <p><span class="owner-tag owner-irina" style="margin-right:4px">Анна</span> Собрать портфолио доказательств по трём направлениям (CJM, AI в админку, гайд по коммуникациям). По каждому — чёткий кейс с результатами: что было → что сделала → что изменилось. Зафиксировать метрики «до/после» уже сейчас, пока данные свежие.</p>
+      <p style="margin-top:6px"><span class="owner-tag owner-egor" style="margin-right:4px">Егор</span> Помочь с упаковкой кейсов и подготовкой к разговору об ассессменте. На следующих сессиях — проверять прогресс по каждому направлению и калибровать: хватает ли аргументов для Senior.</p>
+      <p style="margin-top:6px"><span class="owner-tag owner-both" style="margin-right:4px">Оба</span> Составить таймлайн: когда какое направление должно быть закрыто, чтобы к моменту разговора с руководством всё было готово. Обсудить на следующей сессии.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PROMISES -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon yellow"><svg viewBox="0 0 24 24" fill="none" stroke="#C4A84E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <h2>Договорённости: кто что обещал</h2>
+    </div>
+
+    <table class="promises">
+      <thead>
+        <tr>
+          <th style="width:110px">Кто</th>
+          <th>Что</th>
+          <th style="width:100px">Статус</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="owner-tag owner-egor">Егор</span></td>
+          <td><strong>Найти статьи «до/после»</strong> — кейсы, где описаны изменения в интерфейсе и влияние на метрики (Альфа-Банк, Хабр, техноблоги). Подборка через Grok.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-egor">Егор</span></td>
+          <td><strong>Подборка сервисов, где показывают флоу в продуктах</strong> — примеры, где можно подсмотреть UX-сценарии и пользовательские пути.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-egor">Егор</span></td>
+          <td><strong>Видео про Claude Code</strong> — скинуть материалы, чтобы Анна могла начать использовать AI для задачи с админкой и дизайн-системой.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-egor">Егор</span></td>
+          <td><strong>Посмотреть выступление Анны и дать фидбек</strong> — разобрать структуру, подачу и визуал. Обсудить на следующей сессии.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>Выпросить контакт аналитика</strong> — узнать, какие метрики команда планирует считывать по лендингу и воронке. Предложить обмен: рассказать о продукте, получить данные.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>Прикрепить скрины метрик</strong> — еженедельно фиксировать состояние дашборда по воронке, чтобы видеть динамику.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>Попробовать методику «Сделаю завтра»</strong> — планировать день поминутно, проверять почту 2–3 раза в день, отключать уведомления в фокус-режиме.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>AI в админку</strong> — начать с Claude + код: скормить дизайн-систему, создать MD-файл с компонентами, тестировать генерацию.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>Подумать про качественные метрики для B2B</strong> — дневниковые исследования, опросник в конце флоу, CJM по реальному пути. Обсудить на следующей сессии.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="#A890C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg></div>
+      <h2>Рекомендации от Егора</h2>
+    </div>
+    <div class="card" style="padding:16px 20px;">
+      <div class="rec-item">
+        <div class="rec-num">1</div>
+        <div class="rec-text"><strong>Метрики в B2B — качественные, а не количественные.</strong> Когда аудитория маленькая, работают CJM по реальному пути, дневниковые исследования (попросить пользователя показать экран пару часов), опросники в конце флоу. Проблема может быть не в твоём продукте, а в смежном сервисе.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">2</div>
+        <div class="rec-text"><strong>Подружиться с аналитиком «на берегу».</strong> Предложить обмен: ты рассказываешь историю продукта, аналитик делится планами по метрикам. Умение говорить на языке метрик — ключевое для роста в лида.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">3</div>
+        <div class="rec-text"><strong>Методика «Сделаю завтра»</strong> для борьбы с авралами. Планировать день поминутно. Почта — 2–3 раза в день. На «срочные» запросы отвечать: «Сегодня не могу, есть слот завтра». Половина задач отвалится сама.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">4</div>
+        <div class="rec-text"><strong>«Два водителя»: Креатор и Редактор.</strong> Не пытаться вылизывать один слайд до идеала, пока остальные на нуле. Это касается и презентаций, и дизайн-решений: сначала накидать варианты — wireframes ручкой на листке, быстрые скетчи, черновые идеи без оглядки на качество. И только потом переносить в Figma и доводить. Попробовать надиктовывать контент на диктофон — для презентаций это особенно экономит время.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">5</div>
+        <div class="rec-text"><strong>AI-пайплайн для презентаций:</strong> диктофон → нейронка → текст по слайдам → Claude делает черновые макеты → NotebookLM → стиль и иллюстрации. Экономит часы мучений.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">6</div>
+        <div class="rec-text"><strong>AI для дизайн-системы:</strong> скормить всю ДС в Claude, сделать MD-файл с отступами, цветами, компонентами. Дальше использовать как контекст для генерации макетов и проверки на соответствие.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">7</div>
+        <div class="rec-text"><strong>Управление встречами и временем.</strong> Перед встречей узнавать адженду. Если встреча большая и не вся про тебя — попросить вынести твои вопросы в начало, чтобы не сидеть час ради пяти минут. Объединять мелкие слоты в крупные блоки для глубокой работы, помнить, что на переключение между задачами тоже уходит время. Не делать несколько дел параллельно. Планировать день на следующий вечер и оставлять передышки — не забивать все слоты подряд. Бронировать время на обед и отдых так же серьёзно, как рабочие встречи.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ALERT -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="#D47272" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <h2>На что обратить внимание</h2>
+    </div>
+    <div class="alert">
+      <div class="alert-title">Энергия и фокус</div>
+      <p>Анна отмечает, что график очень плотный: много встреч, свободное время раздроблено на мелкие слоты, сложно погрузиться в задачу. Болезнь после конференции и спринт-ревью — сигнал, что организм просит передышку.</p>
+      <p style="margin-top:10px">Что может помочь:</p>
+      <p style="margin-top:6px">• <strong>Методика «Сделаю завтра»</strong> — планировать день поминутно, проверять почту и мессенджеры 2–3 раза в день в выделенные слоты. На «срочные» запросы отвечать: «Есть слот завтра» — половина задач решится сама.</p>
+      <p style="margin-top:4px">• <strong>Бронировать время на себя</strong> — обед, планирование следующего дня и хотя бы один двухчасовой блок без встреч на глубокую работу.</p>
+      <p style="margin-top:4px">• <strong>Разделять Креатора и Редактора</strong> — не вылизывать один слайд до идеала, пока остальное на нуле. Сначала черновик целиком, потом доводка. Можно начинать с диктофона — надиктовать мысли, а потом оформить.</p>
+      <p style="margin-top:4px">• <strong>Отслеживать своё состояние</strong> — если замечаешь, что несколько дней подряд не хватает сил, это повод пересмотреть приоритеты, а не давить на себя сильнее. Синдром отличника — это суперсила, но важно, чтобы она работала на тебя, а не против.</p>
+    </div>
+    <div class="alert" style="margin-top:12px;border-left-color:var(--yellow)">
+      <div class="alert-title" style="color:var(--yellow)">Взаимодействие с Михаилом</div>
+      <p>Михаил дал Анне автономию в CJM-проекте и объяснил, что рост связан с принятием рисков. Это ценно — такое доверие со стороны руководителя встречается нечасто, и Анна отлично с ним справляется.</p>
+      <p style="margin-top:10px">Чтобы эта автономия работала устойчиво, стоит подстраховаться:</p>
+      <p style="margin-top:6px">• <strong>Зафиксировать ожидания</strong> — договориться с Михаилом, что именно считается успехом проекта, какие результаты он ждёт и в какие сроки. Лучше в письменном виде, хотя бы коротко в сообщении.</p>
+      <p style="margin-top:4px">• <strong>Регулярные короткие синки</strong> — даже 15 минут раз в неделю или две, чтобы делиться прогрессом и получать обратную связь. Это защищает от ситуации, когда результат есть, а руководитель не в курсе.</p>
+      <p style="margin-top:4px">• <strong>Фиксировать свой вклад</strong> — записывать, что именно ты сделала, какие решения приняла, что изменилось. Пригодится и для ассессмента, и просто чтобы самой видеть свой рост.</p>
+    </div>
+  </div>
+
+  <!-- NEXT SESSION -->
+  <div style="margin-top:56px;text-align:center;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:12px;">Следующая сессия</div>
+    <div style="font-size:28px;font-weight:700;color:var(--text);letter-spacing:-0.02em;">3 апреля, 16:00</div>
+    <div style="margin-top:16px;">
+      <a href="https://example.zoom.us/j/0000000000" style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--accent);text-decoration:none;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>Подключиться в Zoom</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Подготовлено ментором</p>
+  </div>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.08,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => {
+      observer.observe(el);
+    });
+  });
+</script>
+
+</body>
+</html>

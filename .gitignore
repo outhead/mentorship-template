@@ -1,0 +1,33 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Claude Code
+.claude/
+.claude/settings.local.json
+
+# Vercel
+.vercel/
+.vercelignore
+
+# Temp
+*.tmp
+*.log
+
+# Audio files (не храним в git, только транскрипции)
+*.m4a
+*.mp3
+*.wav
+
+# Personal mentor notes (не публикуем)
+sessions/*/notes.md
+egor_feedback_log.md
+sessions/*/*.docx
+
+# Node
+node_modules/

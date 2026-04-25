@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Что получается</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #17181C;
+    --surface: #22252A;
+    --surface-hover: #2A2D34;
+    --border: rgba(255,255,255,0.10);
+    --border-hover: rgba(255,255,255,0.18);
+    --text: #EAE7E0;
+    --text-dim: #A8A49C;
+    --text-muted: #7D7972;
+    --accent: #D4A955;
+    --accent-light: rgba(212,169,85,0.12);
+    --egor: #A890C4;
+    --egor-light: rgba(168,144,196,0.14);
+    --green: #6BAF8D;
+    --green-light: rgba(107,175,141,0.12);
+    --yellow: #C4A84E;
+    --yellow-light: rgba(196,168,78,0.12);
+    --red: #D47272;
+    --red-light: rgba(212,114,114,0.12);
+    --blue: #7BA3CC;
+    --blue-light: rgba(123,163,204,0.12);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+  .container { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+  a { color: var(--accent); text-decoration: none; transition: opacity 0.2s; }
+  a:hover { opacity: 0.7; }
+  html { scroll-behavior: smooth; }
+  ::selection { background: rgba(107,175,141,0.25); color: var(--text); }
+
+  .back-link {
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:13px; color:var(--text-muted); text-decoration:none;
+    margin-bottom:24px; transition:color 0.2s;
+  }
+  .back-link:hover { color: var(--accent); }
+
+  .tag {
+    display: inline-block;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px; font-weight: 400; line-height: 1.2;
+    margin-bottom: 12px; color: var(--text);
+  }
+  .subtitle { font-size: 14px; color: var(--text-dim); margin-bottom: 20px; }
+
+  .purpose {
+    font-size: 13px; color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+  .purpose strong { color: var(--text-dim); font-weight: 600; }
+
+  /* ===== Stats line ===== */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 36px;
+  }
+  .stat-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .stat-num {
+    font-family: 'Instrument Serif', serif;
+    font-size: 28px; line-height: 1;
+    color: var(--green);
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  @media (max-width: 640px) {
+    .stats { grid-template-columns: 1fr; }
+  }
+
+  /* ===== Milestones (big external results) ===== */
+  .milestones {
+    background: rgba(107,175,141,0.06);
+    border: 1px solid rgba(107,175,141,0.25);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 40px;
+  }
+  .milestones-title {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--green);
+    margin-bottom: 4px;
+  }
+  .milestones-sub {
+    font-size: 13px; color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+  .milestone {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(107,175,141,0.15);
+  }
+  .milestone:first-of-type { border-top: none; padding-top: 4px; }
+  .milestone-icon {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px; color: var(--green);
+    flex-shrink: 0; line-height: 1;
+    margin-top: 2px;
+  }
+  .milestone-body { flex: 1; }
+  .milestone-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .milestone-desc { font-size: 12px; color: var(--text-dim); line-height: 1.55; }
+  .milestone-src {
+    font-size: 11px; color: var(--text-muted);
+    margin-top: 4px;
+    display: block;
+  }
+  .milestone-src a { color: var(--text-muted); }
+  .milestone-src a:hover { color: var(--accent); opacity: 1; }
+
+  /* ===== Section ===== */
+  .section { margin-bottom: 44px; }
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .section-count {
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  .win {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid rgba(107,175,141,0.5);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    transition: border-color 0.2s;
+  }
+  .win:hover { border-color: var(--border-hover); border-left-color: var(--green); }
+  .win-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .win-desc { font-size: 13px; color: var(--text-dim); line-height: 1.55; }
+  .win-meta {
+    font-size: 11px; color: var(--text-muted);
+    margin-top: 6px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .win-meta a { color: var(--text-muted); }
+  .win-meta a:hover { color: var(--accent); opacity: 1; }
+
+  /* Kind markers */
+  .kind {
+    display: inline-flex; align-items: center; font-size: 10px; font-weight: 600;
+    padding: 2px 7px; border-radius: 4px;
+  }
+  .kind-external { color: var(--green); background: var(--green-light); }
+  .kind-system { color: var(--egor); background: var(--egor-light); }
+  .kind-energy { color: var(--blue); background: var(--blue-light); }
+  .kind-skill { color: var(--yellow); background: var(--yellow-light); }
+  .kind-recognition { color: var(--egor); background: var(--egor-light); }
+  .kind-insight { color: var(--text-dim); background: rgba(255,255,255,0.05); }
+
+  /* ===== Recognitions ===== */
+  .recognitions {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 40px;
+  }
+  .recognition {
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .recognition:first-of-type { border-top: none; padding-top: 4px; }
+  .recognition-quote {
+    font-family: 'Instrument Serif', serif;
+    font-size: 17px;
+    color: var(--text);
+    line-height: 1.4;
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+  .recognition-quote::before { content: "«"; color: var(--text-muted); margin-right: 2px; }
+  .recognition-quote::after { content: "»"; color: var(--text-muted); margin-left: 2px; }
+  .recognition-by {
+    font-size: 12px; color: var(--text-muted);
+  }
+  .recognition-by strong { color: var(--text-dim); font-weight: 600; }
+
+  /* ===== Assessment box ===== */
+  .assessment {
+    background: rgba(168,144,196,0.05);
+    border: 1px solid rgba(168,144,196,0.22);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 40px;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .assessment-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 18px;
+    color: var(--egor);
+    margin-bottom: 10px;
+  }
+  .assessment ul { list-style: none; padding: 0; }
+  .assessment li {
+    padding: 6px 0 6px 18px;
+    position: relative;
+  }
+  .assessment li::before {
+    content: "→";
+    position: absolute; left: 0;
+    color: var(--egor);
+  }
+  .assessment strong { color: var(--text); font-weight: 600; }
+
+  /* ===== Footer ===== */
+  .footer {
+    margin-top: 48px;
+    text-align: center; color: var(--text-muted); font-size: 13px;
+  }
+  .footer a { color: var(--text-muted); }
+  .footer a:hover { color: var(--accent); opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <a href="./" class="back-link">&#8592; Все сессии</a>
+
+  <div class="tag">Что получается</div>
+  <h1>Трек-рекорд прогресса</h1>
+  <p class="subtitle">Всё хорошее, что случилось за пять сессий — внешние результаты, энергетические сдвиги, инсайты, признания.</p>
+
+  <div class="purpose">
+    <strong>Зачем эта страница.</strong> Два рабочих сценария: (1) когда энергия проседает и кажется, что ничего не движется — открыть, посмотреть, успокоиться; (2) готовить материал к ассессменту на Senior — вот конкретный список поставленного и сдвинутого, по осям компетенций.
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-cell">
+      <div class="stat-num">30</div>
+      <div class="stat-label">Конкретных побед</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">15</div>
+      <div class="stat-label">Договорённостей закрыто</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Сессий · с 13 марта</div>
+    </div>
+  </div>
+
+  <!-- MILESTONES -->
+  <div class="milestones">
+    <div class="milestones-title">Главные вехи</div>
+    <div class="milestones-sub">То, что видно снаружи — ощутимые результаты в компании.</div>
+
+    <div class="milestone">
+      <span class="milestone-icon">★</span>
+      <div class="milestone-body">
+        <div class="milestone-title">CJM-пилот доведён от наблюдений до фреймворка и разметки</div>
+        <div class="milestone-desc">От пилотной CJM (s01) → презентация команде и Михаилу (s02) → матрица гипотез-задач с ответственными (s03) → еженедельные синки и разметка сайта (s04) → конкретный список изменений воронки с замером эффекта (s05). Дизайнер стала тянуть тему метрик в B2B-команде — раньше этим занимался только продакт. Готовый кейс для Senior.</div>
+        <span class="milestone-src"><a href="sessions/session-01/">s01</a> &rarr; <a href="sessions/session-02/">s02</a> &rarr; <a href="sessions/session-03/">s03</a> &rarr; <a href="sessions/session-04/">s04</a> &rarr; <a href="sessions/session-05/">s05</a></span>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <span class="milestone-icon">★</span>
+      <div class="milestone-body">
+        <div class="milestone-title">MVP личного таск-трекера за выходные</div>
+        <div class="milestone-desc">Первый AI-кейс, сделанный руками. Уверенность 8/10 — не «попробую», а «работает». Первый артефакт, который можно показать как пример вайб-кодинга для дизайнера.</div>
+        <span class="milestone-src"><a href="sessions/session-05/">session-05</a></span>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <span class="milestone-icon">★</span>
+      <div class="milestone-body">
+        <div class="milestone-title">Лендинг на внешку — в проде за 2 недели</div>
+        <div class="milestone-desc">Создан в Figma Make совместно с продуктом. Закрыл гипотезы из CJM: безопасность, разделение продуктов, кейсы. Первый самостоятельный проект такого масштаба.</div>
+        <span class="milestone-src"><a href="sessions/session-02/">session-02</a></span>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <span class="milestone-icon">★</span>
+      <div class="milestone-body">
+        <div class="milestone-title">Четвёртое выступление — впервые без страха забыть</div>
+        <div class="milestone-desc">Использовала ChatGPT для структурирования. Канва ровная, структура правильная. Появилась мечта выступать за пределами компании. Отдельно — продолжает рассказывать на продакт-оунерских курсах про дизайн-систему и нейронки.</div>
+        <span class="milestone-src"><a href="sessions/session-03/">session-03</a>, <a href="sessions/session-04/">session-04</a></span>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <span class="milestone-icon">★</span>
+      <div class="milestone-body">
+        <div class="milestone-title">Метрики в B2B-команде — с нуля до разметки и LTV</div>
+        <div class="milestone-desc">От «у нас нет аналитика» → Анна настояла на отслеживании → список метрик передан → команда размечает сайт через low-code инструменты → Михаил провёл мастер-класс по LTV на бумажке. Это системный сдвиг в команде, инициированный дизайнером.</div>
+        <span class="milestone-src"><a href="sessions/session-02/">s02</a> &rarr; <a href="sessions/session-03/">s03</a> &rarr; <a href="sessions/session-04/">s04</a></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECOGNITIONS -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">Признания и сигналы снаружи</div>
+      <div class="section-count">Как её видят</div>
+    </div>
+
+    <div class="recognitions">
+      <div class="recognition">
+        <div class="recognition-quote">Когда ты открываешь набор в свою команду?</div>
+        <div class="recognition-by">— <strong>Михаил</strong>, руководитель, session-03. Сигнал восприятия управленческого потенциала.</div>
+      </div>
+
+      <div class="recognition">
+        <div class="recognition-quote">Михаил дал огромную автономию на CJM</div>
+        <div class="recognition-by">После презентации CJM-пилота, session-02. Неожиданное признание — не нужны микроменеджмент и контроль.</div>
+      </div>
+
+      <div class="recognition">
+        <div class="recognition-quote">Продакты на курсах слушают как идеалов</div>
+        <div class="recognition-by">Когда рассказывает про дизайн-систему + нейронки + лендинг с промптом, session-04.</div>
+      </div>
+
+      <div class="recognition">
+        <div class="recognition-quote">Редизайн админки через исследования — сильный трек за 2 года</div>
+        <div class="recognition-by">— <strong>Егор</strong>, session-01. Преодолела сопротивление разработки, принесла данные.</div>
+      </div>
+
+      <div class="recognition">
+        <div class="recognition-quote">Выступление: структура правильная, канва ровная</div>
+        <div class="recognition-by">— <strong>Егор</strong>, session-03. Первое выступление без страха забыть — навык в её руках.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STRATEGIC WINS -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">CJM и метрики</div>
+      <div class="section-count">Стратегия</div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Мастер-класс по LTV от Михаила</div>
+      <div class="win-desc">На бумажке: движение CTR → прибыль. LTV = тариф × число периодов. Анна хочет объяснить это другому — признак, что материал усвоен на уровне Senior.</div>
+      <div class="win-meta"><span class="kind kind-skill">Навык</span><a href="sessions/session-04/">session-04</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Разметка сайта в работе</div>
+      <div class="win-desc">Новый продакт занимается, разработчик размечает код в VS Code через low-code инструмент. Живая связь с процессом измерений, которая раньше казалась невозможной.</div>
+      <div class="win-meta"><span class="kind kind-external">Результат</span><a href="sessions/session-04/">session-04</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Роль в метриках — зафиксирована для ассессмента</div>
+      <div class="win-desc">Егор подчеркнул: на Senior важно показать, что именно Анна настаивала на отслеживании метрик. Это аргумент уровня лид, не исполнитель.</div>
+      <div class="win-meta"><span class="kind kind-system">Сдвиг</span><a href="sessions/session-03/">session-03</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">CJM-пилот → фреймворк с матрицей</div>
+      <div class="win-desc">На s03 собрала полноценный фреймворк: гипотезы + задачи + ответственные. На s04 — идёт к RICE-приоритизации.</div>
+      <div class="win-meta"><span class="kind kind-system">Сдвиг</span><a href="sessions/session-03/">session-03</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Лендинг без CTA — нашла как кейс «до»</div>
+      <div class="win-desc">Внутри онлайн-банка обнаружила лендинг вообще без CTA. Это идеальный «до» для портфолио и аргумент для единой системы коммуникаций.</div>
+      <div class="win-meta"><span class="kind kind-insight">Инсайт</span><a href="sessions/session-05/">session-05</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Список изменений воронки → замер эффекта</div>
+      <div class="win-desc">Конкретные изменения (кнопка «расширить интеграцию», предзаполнение заявки, рассылка активации, миграция между ERP-платформами) с ответственными и метриками. Кейс из CJM перешёл в измеримое влияние.</div>
+      <div class="win-meta"><span class="kind kind-system">Сдвиг</span><a href="sessions/session-05/">session-05</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">Отношения с командой</div>
+      <div class="section-count">Стратегия</div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Связка с продактом налажена — живая</div>
+      <div class="win-desc">Онбордит нового продакта по продукту, взамен получает всю информацию о планах команды. Контакт «отдельного аналитика» не понадобился — команда сама организовала разметку.</div>
+      <div class="win-meta"><span class="kind kind-system">Сдвиг</span><a href="sessions/session-04/">session-04</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Вышла на прямой контакт с продакт-командой</div>
+      <div class="win-desc">От «мы почти не общаемся» (s01) до активных встреч и совместной работы по разметке/CJM (s04). Это не случайность — Анна сама инициировала сближение.</div>
+      <div class="win-meta"><span class="kind kind-system">Сдвиг</span><a href="sessions/session-03/">s03</a>, <a href="sessions/session-04/">s04</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Вернула чужую ответственность на PBR</div>
+      <div class="win-desc">Вместо того чтобы самой записывать решения, написала организатору: «Может, назначим ответственного?» Проявила инициативу и не взяла чужую работу.</div>
+      <div class="win-meta"><span class="kind kind-insight">Инсайт</span><a href="sessions/session-03/">session-03</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">Выступления и личный бренд</div>
+      <div class="section-count">Стратегия</div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Выступление без страха забыть канву</div>
+      <div class="win-desc">Четвёртое публичное выступление. Впервые не переживала. Использовала ChatGPT для структурирования. Появилась мечта выступать наружу.</div>
+      <div class="win-meta"><span class="kind kind-skill">Навык</span><a href="sessions/session-03/">session-03</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Продакты на курсах слушают как идеалов</div>
+      <div class="win-desc">Рассказывает про дизайн-систему, нейронки, лендинг с промптом. Внутренний спикер без ярлыка «дизайнер-исполнитель».</div>
+      <div class="win-meta"><span class="kind kind-recognition">Признание</span><a href="sessions/session-04/">session-04</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Разобран фидбек по выступлению</div>
+      <div class="win-desc">Конкретные советы Егора: добавить выводы, в начале сказать «что вы получите». Канва для следующих докладов.</div>
+      <div class="win-meta"><span class="kind kind-skill">Навык</span><a href="sessions/session-03/">session-03</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">AI в работу</div>
+      <div class="section-count">Стратегия</div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Прототип в Figma Make «взлетел»</div>
+      <div class="win-desc">С драг-н-дропом. Первый AI-проект, получивший тягу в компании. Лендинг в прод за 2 недели — прямое следствие.</div>
+      <div class="win-meta"><span class="kind kind-external">Результат</span><a href="sessions/session-01/">session-01</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Вдохновилась Claude Code — своим таск-трекером</div>
+      <div class="win-desc">Посмотрела видео, поставила цель сделать личный таск-трекер. Начала разговор с другом из Банка про новые роли с AI.</div>
+      <div class="win-meta"><span class="kind kind-skill">Навык</span><a href="sessions/session-03/">session-03</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Разница OpenAI / Anthropic усвоена</div>
+      <div class="win-desc">Про передачу данных властям США поняла. Переходит с ChatGPT на Claude — более осознанный выбор инструмента.</div>
+      <div class="win-meta"><span class="kind kind-insight">Инсайт</span><a href="sessions/session-04/">session-04</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Личный таск-трекер: MVP 8/10 за выходные</div>
+      <div class="win-desc">Первый AI-кейс собственными руками. Высокая уверенность в результате — это уже не «попробую», а работающий артефакт.</div>
+      <div class="win-meta"><span class="kind kind-external">Результат</span><a href="sessions/session-05/">session-05</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Параллельные эксперименты: Claude Design + Obsidian</div>
+      <div class="win-desc">Запустила два направления одновременно, чтобы понять — какое именно встраивается в рутину. Сама уверенность по обоим — 5/10, но критерий «реальное ускорение vs попробовать ради попробовать» зафиксирован.</div>
+      <div class="win-meta"><span class="kind kind-skill">Навык</span><a href="sessions/session-05/">session-05</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">Энергия и режим</div>
+      <div class="section-count">Операционка</div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Почта очищена — 1500 писем</div>
+      <div class="win-desc">Разовая акция. Осталось одно напоминание. Фокус улучшился, время на почту упало. «Теперь легко».</div>
+      <div class="win-meta"><span class="kind kind-energy">Энергия</span><a href="sessions/session-04/">session-04</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Уведомления мессенджера — закрепилось окончательно</div>
+      <div class="win-desc">Отключила в отпуске, возвращать не стала. 5+ недель — ничего важного не пропустила. На session-05 уже не звучит как эксперимент: это норма. Договорённость закрыта.</div>
+      <div class="win-meta"><span class="kind kind-energy">Энергия</span><a href="sessions/session-04/">s04</a> &rarr; <a href="sessions/session-05/">s05</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Методика «Сделаю завтра» — прижилась как фон</div>
+      <div class="win-desc">Декомпозиция в календаре, один фокус в моменте. На session-05 уже не звучит как живая боль — работает по умолчанию. Метод стал привычкой, договорённость закрыта.</div>
+      <div class="win-meta"><span class="kind kind-skill">Навык</span><a href="sessions/session-02/">s02</a> &rarr; <a href="sessions/session-05/">s05</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Один фокус в моменте</div>
+      <div class="win-desc">Не делает дел во время созвонов. В календаре — много сфокусированных рабочих слотов. Качество и присутствие выросли.</div>
+      <div class="win-meta"><span class="kind kind-energy">Энергия</span><a href="sessions/session-03/">session-03</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">Самоосознание</div>
+      <div class="section-count">Фундамент</div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Осознала перфекционизм как проблему</div>
+      <div class="win-desc">«Я попробую» → «я сделаю или пойду делать». Продуктовое мышление vs «попробую и выгорю». Егор подтвердил: это SMART-цели.</div>
+      <div class="win-meta"><span class="kind kind-insight">Инсайт</span><a href="sessions/session-02/">s02</a>, <a href="sessions/session-04/">s04</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Разрешать себе «пошло всё» — это не лень</div>
+      <div class="win-desc">Иногда это даёт больше сил, чем сопротивление через силу. Осознавать усталость — сам по себе навык.</div>
+      <div class="win-meta"><span class="kind kind-insight">Инсайт</span><a href="sessions/session-03/">session-03</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Зафиксировала паттерны энергопотребления</div>
+      <div class="win-desc">Рефлексия в конце дня: что драйвило, что отняло силы. Повторяющийся паттерн — не повод давить, а материал для системных изменений.</div>
+      <div class="win-meta"><span class="kind kind-insight">Инсайт</span><a href="sessions/session-03/">session-03</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">«Самоходный комитет» — впервые ушла со встречи без ценности</div>
+      <div class="win-desc">Маркер роста: осознанно вышла со встречи, где перестала видеть смысл. Из «терпеть до конца» в «оценить за 15 минут и решить». Без извинений.</div>
+      <div class="win-meta"><span class="kind kind-insight">Инсайт</span><a href="sessions/session-05/">session-05</a></div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Карта компетенций заполнена самостоятельно</div>
+      <div class="win-desc">Собственная оценка хардов и софтов. Фундамент для роста и конкретный чекин-поинт для следующих оценок.</div>
+      <div class="win-meta"><span class="kind kind-skill">Навык</span><a href="sessions/session-01/">s01</a> &rarr; <a href="sessions/session-02/">s02</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">Редизайн админки</div>
+      <div class="section-count">Внешний результат</div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">Редизайн через исследования — преодолела сопротивление</div>
+      <div class="win-desc">За 2 года провела редизайн админки на базе исследований, продвинула его через разработку. Егор назвал это «сильным треком» — отдельный кейс для портфолио.</div>
+      <div class="win-meta"><span class="kind kind-external">Результат</span><a href="sessions/session-01/">session-01</a></div>
+    </div>
+  </section>
+
+  <!-- ASSESSMENT BOX -->
+  <div class="assessment">
+    <div class="assessment-title">Материал к ассессменту на Senior</div>
+    <p style="margin-bottom: 10px;">Если переформатировать это в три направления портфолио (см. <a href="commitments.html">договорённости</a>):</p>
+    <ul>
+      <li><strong>CJM в B2B</strong> — пилот, фреймворк с матрицей, живая разметка сайта с командой, мастер-класс по LTV от Михаила, связка CTR → прибыль.</li>
+      <li><strong>AI в работе</strong> — Figma Make-лендинг в проде, планы на AI в админку, переход на Claude, обучение продактов промптингу.</li>
+      <li><strong>Гайд по коммуникациям</strong> — пока в работе, но разметка и поп-апы уже идут в одном ключе.</li>
+    </ul>
+    <p style="margin-top: 12px;">Отдельная ось — <strong>управленческий потенциал</strong>: вопрос Михаила про команду, обучение продактов, инициатива в CJM, возврат чужой ответственности на PBR.</p>
+  </div>
+
+  <div class="footer">
+    <p>Обновлено после <a href="sessions/session-05/">сессии #5</a> · <a href="commitments.html">Договорённости</a></p>
+  </div>
+
+</div>
+
+</body>
+</html>

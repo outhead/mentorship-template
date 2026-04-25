@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сессия #5: Метрики, границы и вайб-кодинг лендосов</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #17181C;
+    --surface: #22252A;
+    --surface-hover: #2A2D34;
+    --border: rgba(255,255,255,0.10);
+    --border-hover: rgba(255,255,255,0.18);
+    --text: #EAE7E0;
+    --text-dim: #A8A49C;
+    --text-muted: #7D7972;
+    --accent: #D4A955;
+    --accent-light: rgba(212,169,85,0.12);
+    --egor: #A890C4;
+    --egor-light: rgba(168,144,196,0.14);
+    --green: #6BAF8D;
+    --green-light: rgba(107,175,141,0.12);
+    --yellow: #C4A84E;
+    --yellow-light: rgba(196,168,78,0.12);
+    --red: #D47272;
+    --red-light: rgba(212,114,114,0.12);
+    --blue: #7BA3CC;
+    --blue-light: rgba(123,163,204,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header {
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .session-tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .meta-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--text-muted);
+  }
+
+  .section { margin-bottom: 40px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .section-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .section-icon svg { width: 18px; height: 18px; }
+  .section-icon.green { background: var(--green-light); }
+  .section-icon.yellow { background: var(--yellow-light); }
+  .section-icon.red { background: var(--red-light); }
+  .section-icon.blue { background: var(--blue-light); }
+  .section-icon.purple { background: var(--egor-light); }
+  .section-icon.gold { background: var(--accent-light); }
+
+  h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: var(--border-hover); }
+
+  .card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .card p:last-child { margin-bottom: 0; }
+
+  .card strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 600px) { .result-grid { grid-template-columns: 1fr; } }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+
+  .result-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .result-value {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .promises {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .promises thead th {
+    background: var(--surface-hover);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    padding: 14px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .promises tbody td {
+    padding: 16px 20px;
+    font-size: 14px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    vertical-align: top;
+  }
+
+  .promises tbody tr:last-child td { border-bottom: none; }
+
+  .owner-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .owner-egor { color: var(--egor); background: var(--egor-light); }
+  .owner-irina { color: var(--green); background: var(--green-light); }
+  .owner-both { color: var(--yellow); background: var(--yellow-light); }
+
+  .comp-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comp-row:first-child { padding-top: 4px; }
+  .comp-row:last-child { border-bottom: none; padding-bottom: 4px; }
+
+  .comp-name {
+    flex: 0 0 160px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .comp-note {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* GROW block */
+  .grow-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .grow-step {
+    padding: 22px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .grow-step:last-child { border-bottom: none; }
+
+  .grow-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .grow-letter {
+    font-family: 'Instrument Serif', serif;
+    font-size: 26px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--accent-light);
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .grow-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 19px;
+    color: var(--text);
+  }
+
+  .grow-sub {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-top: 2px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .grow-step p {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+  .grow-step p:last-child { margin-bottom: 0; }
+  .grow-step strong { color: var(--text); font-weight: 500; }
+
+  .grow-list {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0 0;
+  }
+  .grow-list li {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    padding: 8px 0 8px 18px;
+    position: relative;
+    line-height: 1.55;
+    border-top: 1px dashed var(--border);
+  }
+  .grow-list li:first-child { border-top: none; padding-top: 4px; }
+  .grow-list li::before {
+    content: '';
+    position: absolute;
+    left: 2px; top: 16px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.6;
+  }
+  .grow-list li:first-child::before { top: 12px; }
+  .grow-list li strong { color: var(--text); font-weight: 500; }
+
+  .quote {
+    border-left: 3px solid var(--egor);
+    padding: 16px 20px;
+    margin: 20px 0 0;
+    background: var(--egor-light);
+    border-radius: 0 8px 8px 0;
+  }
+  .quote.ira { border-left-color: var(--green); background: var(--green-light); }
+
+  .quote p {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .quote .attr {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-style: normal;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 44px 0;
+  }
+
+  .rec-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rec-item:first-child { padding-top: 4px; }
+  .rec-item:last-child { border-bottom: none; padding-bottom: 4px; }
+
+  .rec-num {
+    flex: 0 0 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--egor-light);
+    color: var(--egor);
+  }
+
+  .rec-text {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text-dim);
+    padding-top: 3px;
+  }
+
+  .rec-text strong { color: var(--text); font-weight: 500; }
+
+  .footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: none;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    opacity: 0.6;
+  }
+
+  .highlight { color: var(--egor); font-weight: 500; }
+  .highlight-green { color: var(--green); font-weight: 500; }
+  .highlight-gold { color: var(--accent); font-weight: 500; }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  .status.done { color: var(--green); background: var(--green-light); }
+  .status.progress { color: var(--yellow); background: var(--yellow-light); }
+  .status.todo { color: var(--blue); background: var(--blue-light); }
+  .status.dropped { color: var(--text-muted); background: rgba(255,255,255,0.06); }
+  .status.blocked { color: var(--red); background: var(--red-light); }
+
+  .alert {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 0;
+  }
+
+  .alert + .alert { margin-top: 12px; }
+
+  .alert-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+
+  .alert p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  /* Confidence widget */
+  .conf-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+  }
+  .conf-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .conf-row:first-child { padding-top: 0; }
+  .conf-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .conf-name {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+  }
+  .conf-name small {
+    display: block;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+  .conf-bar {
+    flex: 0 0 110px;
+    height: 6px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .conf-bar span {
+    display: block;
+    height: 100%;
+    background: var(--green);
+    border-radius: 3px;
+  }
+  .conf-bar.med span { background: var(--yellow); }
+  .conf-bar.low span { background: var(--red); }
+  .conf-num {
+    flex: 0 0 36px;
+    text-align: right;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+  }
+
+  a { transition: color 0.2s ease, opacity 0.2s ease; }
+  a:hover { opacity: 0.85; }
+  html { scroll-behavior: smooth; }
+  ::selection { background: rgba(212,169,85,0.25); color: var(--text); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .header .session-tag { animation: fadeIn 0.5s ease-out both; animation-delay: 0.1s; }
+  .header h1 { animation: fadeUp 0.6s ease-out both; animation-delay: 0.2s; }
+  .header .meta { animation: fadeIn 0.5s ease-out both; animation-delay: 0.4s; }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+
+  .reveal-stagger.visible > * { opacity: 1; transform: translateY(0); }
+
+  .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0s; }
+  .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.08s; }
+  .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.16s; }
+  .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.24s; }
+  .reveal-stagger.visible > *:nth-child(5) { transition-delay: 0.32s; }
+  .reveal-stagger.visible > *:nth-child(6) { transition-delay: 0.40s; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <a href="../../" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);text-decoration:none;margin-bottom:24px;transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">← Все сессии</a>
+
+  <div class="header">
+    <div class="session-tag">Сессия #5</div>
+    <h1>Метрики, границы и вайб-кодинг лендосов</h1>
+    <div class="meta">
+      <div class="meta-item">24 апреля, 16:00</div>
+      <div class="meta-dot"></div>
+      <div class="meta-item">Ментор: Егор</div>
+      <div class="meta-dot"></div>
+      <div class="meta-item">Менти: Анна</div>
+      <div class="meta-dot"></div>
+      <div class="meta-item">Длительность: 1,5 часа</div>
+      <div class="meta-dot"></div>
+      <div class="meta-item">Формат: GROW-разбор</div>
+    </div>
+  </div>
+
+  <!-- KEY RESULTS WITH PRIOR SESSION -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="#6BAF8D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <h2>Что произошло с прошлой сессии</h2>
+    </div>
+    <div class="result-grid reveal-stagger">
+      <div class="result-card">
+        <div class="result-label">Связь с продакт-командой</div>
+        <div class="result-value">Закрепилось <span class="status done">✓ done</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Совместная работа по разметке и CJM продолжается, контекст приходит без выпрашивания.</p>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Бумажка → трекер</div>
+        <div class="result-value">Прижилось частично <span class="status progress">→ в работе</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">День по бумажке держится. С переносом невыполненного в единую точку — пока боль, нет «своего» инструмента.</p>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Уведомления выкл</div>
+        <div class="result-value">Удерживается <span class="status done">✓ done</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Уведомления внутреннего мессенджера так и не включила. Ничего критичного не пропущено.</p>
+      </div>
+      <div class="result-card">
+        <div class="result-label">RICE-материалы от Егора</div>
+        <div class="result-value">Не пришли <span class="status blocked">⚠ blocked</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Без них Анна не может стартовать RICE-приоритизацию с командой. Коммит Егора переезжает на эту неделю.</p>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Воронка: список изменений</div>
+        <div class="result-value">Пока в голове <span class="status todo">○ todo</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Кнопка интеграции, предзаполнение, email-активация, миграция между ERP-платформами. Нужно вынести в файл с ответственными и метриками.</p>
+      </div>
+      <div class="result-card">
+        <div class="result-label">«Самоходный комитет»</div>
+        <div class="result-value">Новый принцип <span class="status done">✓ done</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Впервые осознанно вышла из встречи, на которой перестала видеть ценность. Не «потерпела до конца», а ушла. Маркер роста.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- GROW STRUCTURE -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="#D4A955" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+      <h2>GROW: вайб-кодинг лендосов как тема сессии</h2>
+    </div>
+
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Запрос на сессию: <strong style="color:var(--text);font-weight:500;">«Продакты делают лендинги в обход дизайнеров. Что с этим делать как дизайнеру, который про систему?»</strong> Разбирали по GROW — Goal, Reality, Options, Will.</p>
+
+    <div class="grow-block">
+      <!-- GOAL -->
+      <div class="grow-step">
+        <div class="grow-head">
+          <div class="grow-letter">G</div>
+          <div>
+            <div class="grow-title">Цель</div>
+            <div class="grow-sub">Goal · что должно быть, когда задача решена</div>
+          </div>
+        </div>
+        <p>Не «научить продактов дизайну» — а сделать так, чтобы лендинги, которые продакты делают сами, проходили проверку на качество <strong>до</strong> публикации. Не цензура, а сетка минимальных требований + быстрый канал ревью.</p>
+        <p>Цель — не остановить волну вайб-кодинга, а оседлать её: дать продактам инструмент, в котором заложено качество, и проверочную точку, куда они сами хотят идти.</p>
+      </div>
+
+      <!-- REALITY -->
+      <div class="grow-step">
+        <div class="grow-head">
+          <div class="grow-letter">R</div>
+          <div>
+            <div class="grow-title">Реальность</div>
+            <div class="grow-sub">Reality · как обстоят дела сейчас</div>
+          </div>
+        </div>
+        <ul class="grow-list">
+          <li><strong>Бывают лендинги даже без CTA.</strong> Один такой Анна нашла внутри онлайн-банка — клиент попадает, читает, и не видит, куда нажать дальше. Это не теоретическая проблема, а живой пример.</li>
+          <li><strong>Лендинги живут в разных местах.</strong> У команды нет единой точки, где собраны все продуктовые лендинги, и аналитика по ним размазана. Из-за разнобоя в доменах/локациях невозможно нормально мерить воронку — данные собираются с разрозненных точек.</li>
+          <li><strong>Прецедент с Replit в другой команде.</strong> Соседи уже вайб-кодили лендинг на Replit и выкатили его в прод. Это не «эксперимент в песочнице», а волна, которая уже идёт по компании. Дизайн-функция или встраивается в неё, или остаётся в стороне.</li>
+          <li><strong>Нет договорённости про приоритет.</strong> Внутри Ирининой роли два продуктовых направления — admin и marketing service. Михаил, по словам Анны, не любит решать вопрос, какой стрим главный сейчас. Без этого решения Анна выбирает приоритет за него — и это съедает её энергию.</li>
+        </ul>
+        <div class="quote ira">
+          <p>«Они находятся в разных местах. Это аффектит на сбор аналитики и потерю вообще понимания, кто куда перешёл и кто зачем пришёл».</p>
+          <div class="attr">— Анна, про лендинги</div>
+        </div>
+        <div class="quote ira" style="margin-top:12px">
+          <p>«Меня это, конечно, очень сильно развивает, но и очень сильно дезориентирует».</p>
+          <div class="attr">— Анна, про роль на проекте без маркетолога и исследователя</div>
+        </div>
+      </div>
+
+      <!-- OPTIONS -->
+      <div class="grow-step">
+        <div class="grow-head">
+          <div class="grow-letter">O</div>
+          <div>
+            <div class="grow-title">Опции</div>
+            <div class="grow-sub">Options · какие пути есть</div>
+          </div>
+        </div>
+        <ul class="grow-list">
+          <li><strong>Claude Design (или аналог).</strong> Сгенерил лендинг — туда же скормил, получил отчёт «где не по гайду». Минус: новый инструмент в стэке, доступ на корпе непонятен, у Анны ещё нет личного аккаунта Claude. Уверенность <span class="highlight-gold">5/10</span> — сомнительный путь как основной.</li>
+          <li><strong>Научить генератор сразу.</strong> Заложить дизайн-систему в сам промпт/инструмент, которым пользуется продакт. Чтобы плохо сгенерить было сложнее, чем хорошо. Хороший вектор, но требует, чтобы кто-то владел промпт-фреймворком и поддерживал его.</li>
+          <li><strong>Дизайн-система как MD-файл + LLM-проверка</strong> <span class="highlight">(опыт Егора в МТС).</span> Дизайн-систему скормили в один markdown-файл (компоненты, правила, паттерны). Дальше любая нейронка проверяет лендинг/макет против этого файла как против чек-листа: «соответствует / не соответствует, где именно». Низкий порог входа: работает с любой LLM, не привязано к конкретному инструменту, не требует прав в DS-инструментах. Это <strong>третий путь</strong>, который сильнее «Claude Design» и не требует обучения генератора.</li>
+          <li><strong>Кружок разбора + опрув гильдии</strong> <span style="color:var(--text-muted);font-style:italic;">(идея из session-04, на этой сессии не углублялись).</span> Социальный слой поверх инструментального: регулярная встреча, где дизайнеры разбирают вайб-кодженые лендинги. Держим в копилке как путь №4 — вернёмся, когда определимся с инструментом.</li>
+        </ul>
+      </div>
+
+      <!-- WILL -->
+      <div class="grow-step">
+        <div class="grow-head">
+          <div class="grow-letter">W</div>
+          <div>
+            <div class="grow-title">Воля</div>
+            <div class="grow-sub">Will · что Анна берёт в работу</div>
+          </div>
+        </div>
+        <ul class="grow-list">
+          <li><strong>Встреча с Михаилом в среду.</strong> Анна берёт уверенно: «я к среде подготовлюсь, поеду в офис, буду пытаться человека выцепить». Повестка — границы проекта, инвестиция времени, участие маркетолога/исследователя в подготовке лендингов.</li>
+          <li><strong>На выходных — попробовать связку «проект + агент».</strong> Описание проекта в Obsidian/BuildIn, к которому LLMка может подключаться через MCP и собирать саммари / делать презы. Начнёт с маленького файла, посмотрит, заработает ли связка чтения/записи.</li>
+          <li><strong>Эксперимент с Claude Design</strong> <span style="color:var(--text-muted);font-style:italic;">(Егор предложил свой аккаунт на разовое тестирование).</span> Сравнить с подходом «обучить генератор», который уже идёт в команде. Анна честно: «не верю, что у нас в компании это затащат, но попробую».</li>
+          <li><strong>Эксперименты с кодом — позже.</strong> Анна явно отложила: «эксперименты с кодом я оставлю чуть попозже, на выходных хочу отдохнуть».</li>
+        </ul>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:12px;font-style:italic;">На вопрос «по шкале от 1 до 10, насколько уверена, что всё это сделаешь?» Анна ответила <strong>5/10 общим баллом</strong>. Уточняя — «уверена, что поговорю с Михаилом; в выходных попробую связку; с остальным 50 на 50». Дифференциация ниже — реконструкция по этим уточнениям, не её разметка.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CONFIDENCE -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon yellow"><svg viewBox="0 0 24 24" fill="none" stroke="#C4A84E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg></div>
+      <h2>Уверенность: 5 из 10 в среднем</h2>
+    </div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">Егор спросил: «по шкале от 1 до 10, насколько ты уверена, что всё это сделаешь?». Анна ответила общим баллом — <strong style="color:var(--text);font-weight:500;">«5 на пятёрочку»</strong>. На уточняющий вопрос «что нужно изменить, чтобы было 10?» сказала прямо: <strong style="color:var(--text);font-weight:500;">«больше времени и меньше проектов»</strong>.</p>
+    <div class="conf-block">
+      <div class="conf-row">
+        <div class="conf-name">Что Анна берёт уверенно<small>«я к среде подготовлюсь, поеду в офис, буду пытаться выцепить Михаила»; «в выходные попробую свою историю» (связка проекта с агентом)</small></div>
+        <div class="conf-bar"><span style="width:75%"></span></div>
+        <div class="conf-num">↑ да</div>
+      </div>
+      <div class="conf-row">
+        <div class="conf-name">Что под вопросом<small>«с остальным не уверена, 50 на 50». Эксперименты с инструментами и код — отложила: «оставлю чуть попозже»</small></div>
+        <div class="conf-bar med"><span style="width:50%"></span></div>
+        <div class="conf-num">~ 50/50</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);margin-top:12px;font-style:italic;">Сильный момент: Анна не сказала «всё сделаю». Она реалистично оценила нагрузку. Это растущий навык — год назад на этот же вопрос был бы ответ «постараюсь» без чисел. На session-06 — задавать тот же вопрос явно, чтобы закрепить шкалу как ритуал.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- FOMO BLOCK -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="#A890C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <h2>FOMO и где её разместить</h2>
+    </div>
+    <div class="card">
+      <p>Анна принесла знакомое чувство: вокруг все вайб-кодят, делают агентов, переезжают в новые инструменты — а она «не успевает». Разобрали, что FOMO здесь ложная цель, но за ней есть настоящий сигнал.</p>
+      <p style="margin-top:10px"><strong>Цепочка, которую вытащили на сессии:</strong></p>
+      <p style="margin-top:6px">1. <strong>Рутина</strong> — личный таск-трекер, разрозненные точки задач.</p>
+      <p style="margin-top:4px">2. <strong>Автоматизация</strong> — вайб-кодинг этой рутины, локальный AI-агент, единая точка ввода.</p>
+      <p style="margin-top:4px">3. <strong>Кейс на выступление</strong> — «как дизайнер автоматизировал свою рутину и что из этого получилось». Конкретный, прожитый, с цифрами «было/стало».</p>
+      <p style="margin-top:14px"><strong>Где это живёт:</strong> это не отдельная активность, а топливо для линии <span class="highlight-gold">«выступления и личный бренд»</span>. Один проект закрывает три дыры — продуктивность, AI-практику и материал для доклада. Это и есть «сделать FOMO рабочей».</p>
+      <p style="margin-top:10px;color:var(--text-muted);font-size:13px;">Эффект: FOMO перестаёт быть «надо успеть всё» и становится «у меня есть конкретный путь, в котором всё связано».</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- WHAT IRA APPLIES -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="#6BAF8D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <h2>Что Анна начала применять</h2>
+    </div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Не советы из сессий, а её собственный прогресс — то, что она сама принесла как уже работающее.</p>
+
+    <div class="card" style="padding:12px 20px;">
+      <div class="comp-row">
+        <div class="comp-name">«Самоходный комитет»</div>
+        <div class="comp-note">Впервые на встрече осознанно встала и вышла, когда поняла, что не видит ценности. Маркер роста: умение защищать свой слот без чувства вины.<br><span style="color:var(--green);font-style:italic;">«Несмотря на то, что там очень прекрасные люди и мне интересно с ними было общаться, ценность потерялась от этих встреч, и я в общем решила скипнуть».</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-name">Проактивная работа с воронкой</div>
+        <div class="comp-note">Видит не только дизайнерские проблемы, но и системные: разные локации лендингов → невозможно мерить воронку. Сначала ставит вопрос про систему измерения, потом уже — про дизайн. Это движение в сторону роли продуктового дизайнера, а не «оформителя экранов».</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-name">FOMO как топливо, а не паника</div>
+        <div class="comp-note">Раньше «отстаю, надо догонять». Сейчас — «у меня FOMO, давай разберём, что это значит и куда направить». Через 30 минут — конкретная стратегия: один проект (трекер) закрывает рутину, AI-практику и материал для доклада.</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-name">Реалистичная оценка нагрузки</div>
+        <div class="comp-note">На вопрос «по шкале от 1 до 10» сказала «5 на пятёрочку» — без самокритики, как факт. Уточнила, что нужно «больше времени и меньше проектов». Это сдвиг от «постараюсь» к честному «реальная нагрузка позволяет вот столько».</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-name">Цитирует Анну по поводу LLM-влияния на людей</div>
+        <div class="comp-note">«Замечаю, что люди, которые много общаются с LLM, начинают говорить как LLM — отвечают тебе "отличный ответ, теперь у нас есть тема для встречи завтра"». Тонкое наблюдение про язык — Анна уже работает на уровне профессиональной рефлексии о среде, в которой живёт.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- GOALS FOR SENIOR -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="#7BA3CC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      <h2>Цели на ассессмент Senior</h2>
+    </div>
+    <div class="card">
+      <p><strong>1. CJM-проекты</strong> — <span class="status progress">→ в работе</span> — воронка, RICE-приоритизация (заблокирована видео от Егора), один кейс «лендинг без CTA → исправили».</p>
+      <p><strong>2. AI в работу</strong> — <span class="status progress">→ в работе</span> — таск-трекер на выходных как первый личный AI-кейс. После — DS-проверка через MD-файл.</p>
+      <p><strong>3. Обучение продактов + лидерство</strong> — <span class="status progress">→ в работе</span> — встреча с Михаилом про приоритет, кружок разбора лендингов, опрув гильдии.</p>
+      <p><strong>4. Выступления и личный бренд</strong> — <span class="status todo">○ todo</span> — связка «рутина → автоматизация → кейс» как материал. Банк «в режиме тишины», формат «Анна Соколова, дизайнер».</p>
+    </div>
+    <div class="card">
+      <p style="color:var(--text)"><strong>Артефакты в портфолио к ассессменту</strong></p>
+      <p>Файл «Мои проекты» в Figma. Каждый пейдж — проект, в нём «было / что делала / что стало». Кейсы для упаковки: <strong>воронка 26→2 + изменения, лендинг без CTA, обучение продактов через DS-проверку, личный таск-трекер</strong>. Когда наберётся 3–4 — собирать через MCP-нейронку слайд-итог.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PROMISES -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon yellow"><svg viewBox="0 0 24 24" fill="none" stroke="#C4A84E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <h2>Договорённости: кто что обещал</h2>
+    </div>
+
+    <table class="promises">
+      <thead>
+        <tr>
+          <th style="width:110px">Кто</th>
+          <th>Что</th>
+          <th style="width:100px">Статус</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="owner-tag owner-egor">Егор</span></td>
+          <td><strong>Скинуть видео по RICE-методикам</strong> — пере-коммит с прошлой сессии. Без этого Анна не может стартовать RICE-приоритизацию, держит её в blocked.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-egor">Егор</span></td>
+          <td><strong>Поделиться подходом «DS как MD-файл + LLM-проверка»</strong> — кратко описать формат, который Егор использовал в МТС. Может стать третьим путём для проверки лендингов от продактов.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-egor">Егор</span></td>
+          <td><strong>Дать Анне свой аккаунт Claude Max на разовое тестирование Claude Design.</strong> Согласовать окно (токены обновляются каждые 8 часов), скинуть логин/пароль. Цель — Анна загружает DS Банка (GitHub + Figma) и пробует сделать один блок.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>Встреча с Михаилом в среду.</strong> Границы проекта и инвестиция времени, участие маркетолога/исследователя в подготовке лендингов. Берёт уверенно.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>На выходных — связка «проект + агент» в Obsidian/BuildIn.</strong> MVP: маленький файл, проверить, заработает ли чтение/запись через MCP. Если зайдёт — переносить туда новые куски проектов сразу, чтобы не возвращаться.</td>
+          <td><span class="status progress">→ в работе</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>Эксперимент с Claude Design</strong> — после того, как Егор пришлёт доступ. Загрузить DS Банка, сравнить с подходом «обучить генератор», который уже идёт в команде.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>Зафиксировать «самоходный комитет» как принцип.</strong> Не разовый акт, а норма: вышла из встречи, на которой не видишь ценности. Можно обкатать на ближайших встречах.</td>
+          <td><span class="status progress">→ в работе</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-both">Оба</span></td>
+          <td><strong>На session-06 вернуться к RICE-приоритизации</strong> — после того, как Анна посмотрит материал от Егора и попробует приложить к одному решению из воронки.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-both">Оба</span></td>
+          <td><strong>На session-06 обсудить расширение фокусов сессий.</strong> Анна попросила: помимо рабочих стримов добавить «как я как дизайнер развиваюсь, абстрагируясь от Банка». Сформулировать конкретные цели роста.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:12px;color:var(--text-muted);margin-top:12px;">Полный список активных и закрытых договорённостей — <a href="../../commitments.html" style="color:var(--accent);text-decoration:none;">здесь</a>.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="#A890C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg></div>
+      <h2>Рекомендации от Егора</h2>
+    </div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">Из 8 рекомендаций, прозвучавших на сессии, оставляю 4 ключевых — остальное в копилке, отдам по запросу или на следующих сессиях. <strong style="color:var(--text);font-weight:500;">Уверенность 5/10 — не время для домашки на 8 пунктов.</strong></p>
+    <div class="card" style="padding:16px 20px;">
+      <div class="rec-item">
+        <div class="rec-num">1</div>
+        <div class="rec-text"><strong>Принеси Михаилу готовый вопрос, а не ситуацию.</strong> Не «admin или marketing — что важнее?», а «вот моя гипотеза приоритета на квартал, согласен?». Если руководитель не любит решать — облегчи ему: предложи решение, попроси согласие или отклонение. И зафиксируй итог письменно сразу после встречи. Это Senior-навык: не приносить проблемы без вариантов.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">2</div>
+        <div class="rec-text"><strong>Один инструмент за раз.</strong> Не пытайся сразу проверить DS в Claude Design, в Obsidian и в MD-файле. Возьми путь, который ты уже начала — связка «проект + агент» через Obsidian/BuildIn — и доведи её до рабочего MVP. Один. Остальное — потом, когда будет свободный слот, не вместо сна.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">3</div>
+        <div class="rec-text"><strong>FOMO — топливо, не диагноз.</strong> Связка «рутина → автоматизация → выступление» — твоя личная стратегия, которую мы вытащили вместе. Когда снова накроет «все вокруг что-то делают» — возвращайся к этой цепочке: что из моей рутины болит, можно ли автоматизировать, есть ли там история на доклад.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">4</div>
+        <div class="rec-text"><strong>«Самоходный комитет» — практика, а не разовое.</strong> Уйти со встречи без ценности — редкий навык. Запиши как принцип: «если через 15 минут я не понимаю, что я тут делаю — выхожу или беру другое дело». На session-06 я спрошу, сколько раз применила.</div>
+      </div>
+    </div>
+
+    <details style="margin-top:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;">
+      <summary style="cursor:pointer;font-size:13px;color:var(--text-dim);font-weight:500;">+ 4 рекомендации в копилке (отдам, когда понадобятся)</summary>
+      <ul style="margin-top:10px;padding-left:18px;font-size:13px;color:var(--text-dim);line-height:1.7;">
+        <li><strong>«Лендинг без CTA» — потенциальная витрина для портфолио.</strong> Если возьмёшь — двойная польза: артефакт к ассессменту + материал для выступления. Не насилуем — обсудим, когда будет ресурс.</li>
+        <li><strong>Replit-прецедент — повод вписаться, а не соревноваться.</strong> Аргумент в разговоре с Михаилом и новым директором.</li>
+        <li><strong>5/10 — это честность, не слабость.</strong> Когда оцениваешь неделю — не ругай себя за «не сделала», если внешний риск был обозначен заранее.</li>
+        <li><strong>Нет работе по ночам — снова.</strong> Особенно когда новые активности (вайб-кодинг, локальный AI) сами тянут к ночам.</li>
+      </ul>
+    </details>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ALERTS -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="#D47272" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <h2>На что обратить внимание</h2>
+    </div>
+
+    <div class="alert">
+      <div class="alert-title">Михаил избегает решения по приоритету</div>
+      <p>Анна сама обозначила: руководитель не любит решать вопрос «admin или marketing — что главнее сейчас». В отсутствие решения Анна выбирает за него — и это ест энергию, потому что выбор постоянно надо защищать.</p>
+      <p style="margin-top:10px">Что может помочь:</p>
+      <p style="margin-top:6px">• <strong>Прийти с готовым предложением, а не вопросом.</strong> «Я считаю — admin 70%, marketing 30%. Окей?» — на такой формат проще ответить, чем на открытый вопрос.</p>
+      <p style="margin-top:4px">• <strong>Записать решение, даже короткое.</strong> Если Михаил кивнул на словах — сразу зафиксировать в чате/почте: «договорились, что приоритет до конца квартала такой». Это страховка от «а я такого не говорил» и опора при разговоре с новым директором.</p>
+    </div>
+
+    <div class="alert" style="margin-top:12px;border-left-color:var(--yellow)">
+      <div class="alert-title" style="color:var(--yellow)">Аналитика воронки разваливается на разрозненных лендингах</div>
+      <p>Если разные лендинги живут в разных доменах/локациях, и нет единой аналитики — любые цифры воронки получаются неточными. Это не риск «когда-нибудь», а уже работающее ограничение.</p>
+      <p style="margin-top:10px">• <strong>Сначала — карта.</strong> Где сейчас живут все продуктовые лендинги? У кого аналитика? Один экран, в Miro или Figma. До этого — никакая RICE-приоритизация смысла не имеет.</p>
+      <p style="margin-top:4px">• <strong>Аргумент для Михаила.</strong> «Чтобы мерить воронку, нужна единая точка. Иначе цифры обманывают». Это обоснование, под которым легко запросить ресурс.</p>
+    </div>
+
+    <div class="alert" style="margin-top:12px;border-left-color:var(--green)">
+      <div class="alert-title" style="color:var(--green)">Позитивные сигналы</div>
+      <p>За эту сессию Анна сделала несколько шагов, которые год назад были бы невозможны:</p>
+      <p style="margin-top:6px">• Сама применила структуру разбора (GROW-логика по запросу) и пришла с готовым «вот моя проблема, давай разложим».</p>
+      <p style="margin-top:4px">• Дифференцировала уверенность по обещаниям — без самобичевания, по делу.</p>
+      <p style="margin-top:4px">• Перевела FOMO из паники в стратегию за 30 минут разговора.</p>
+      <p style="margin-top:4px">• Впервые осознанно вышла со встречи, где не видела ценности.</p>
+      <p style="margin-top:4px">• Связывает свои находки в систему: лендинг без CTA → кейс → выступление → ассессмент.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- LINKS -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="#7BA3CC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
+      <h2>Упоминалось на сессии</h2>
+    </div>
+    <div class="card">
+      <p><strong>Подходы:</strong> <span class="highlight">DS как MD-файл</span> + LLM-проверка (опыт Егора в МТС). Claude Design (sandbox от Anthropic). Obsidian как единая точка задач/мыслей.</p>
+      <p style="margin-top:8px"><strong>Прецедент:</strong> соседняя команда выкатила вайб-кодженый лендинг через Replit в прод. Индикатор, что волна уже идёт по компании.</p>
+      <p style="margin-top:8px"><strong>Метод:</strong> GROW (Goal · Reality · Options · Will) — фрейм коучинговой сессии, через который шёл разбор «вайб-кодинг лендосов».</p>
+      <p style="margin-top:8px"><strong>Прошлая линия:</strong> воронка 26→2 (session-04), кнопка «расширить интеграцию», миграция между ERP-платформами, email-активация — изменения, эффект которых ещё нужно зафиксировать.</p>
+    </div>
+  </div>
+
+  <!-- SESSION NAV -->
+  <div style="margin-top:56px;display:flex;justify-content:space-between;align-items:flex-start;gap:24px;">
+    <div>
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:8px;">← Предыдущая</div>
+      <a href="../session-04/" style="font-size:15px;font-weight:600;color:var(--text);text-decoration:none;">Сессия #4: Воронка, обучение продактов и личный бренд</a>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:8px;">Следующая сессия</div>
+      <div style="font-size:15px;font-weight:600;color:var(--text);">8 мая, 16:00</div>
+      <a href="https://example.zoom.us/j/0000000000" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--accent);text-decoration:none;margin-top:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>Zoom</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Подготовлено ментором</p>
+  </div>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.08,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => {
+      observer.observe(el);
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сессия #3: Привычки, энергия и AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #17181C;
+    --surface: #22252A;
+    --surface-hover: #2A2D34;
+    --border: rgba(255,255,255,0.10);
+    --border-hover: rgba(255,255,255,0.18);
+    --text: #EAE7E0;
+    --text-dim: #A8A49C;
+    --text-muted: #7D7972;
+    --accent: #D4A955;
+    --accent-light: rgba(212,169,85,0.12);
+    --egor: #A890C4;
+    --egor-light: rgba(168,144,196,0.14);
+    --green: #6BAF8D;
+    --green-light: rgba(107,175,141,0.12);
+    --yellow: #C4A84E;
+    --yellow-light: rgba(196,168,78,0.12);
+    --red: #D47272;
+    --red-light: rgba(212,114,114,0.12);
+    --blue: #7BA3CC;
+    --blue-light: rgba(123,163,204,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  .header {
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .session-tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .meta-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--text-muted);
+  }
+
+  /* SECTIONS */
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .section-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .section-icon svg {
+    width: 18px; height: 18px;
+  }
+
+  .section-icon.green { background: var(--green-light); }
+  .section-icon.yellow { background: var(--yellow-light); }
+  .section-icon.red { background: var(--red-light); }
+  .section-icon.blue { background: var(--blue-light); }
+  .section-icon.purple { background: var(--egor-light); }
+
+  h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--border-hover);
+  }
+
+  .card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .card p:last-child { margin-bottom: 0; }
+
+  .card strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* KEY RESULTS */
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 600px) {
+    .result-grid { grid-template-columns: 1fr; }
+  }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+
+  .result-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .result-value {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  /* PROMISES TABLE */
+  .promises {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .promises thead th {
+    background: var(--surface-hover);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    padding: 14px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .promises tbody td {
+    padding: 16px 20px;
+    font-size: 14px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    vertical-align: top;
+  }
+
+  .promises tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .owner-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .owner-egor {
+    color: var(--egor);
+    background: var(--egor-light);
+  }
+
+  .owner-irina {
+    color: var(--green);
+    background: var(--green-light);
+  }
+
+  .owner-both {
+    color: var(--yellow);
+    background: var(--yellow-light);
+  }
+
+  /* COMPETENCY REVIEW */
+  .comp-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comp-row:first-child { padding-top: 4px; }
+  .comp-row:last-child { border-bottom: none; padding-bottom: 4px; }
+
+  .comp-name {
+    flex: 0 0 160px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .comp-note {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* QUOTE */
+  .quote {
+    border-left: 3px solid var(--egor);
+    padding: 16px 20px;
+    margin: 20px 0 0;
+    background: var(--egor-light);
+    border-radius: 0 8px 8px 0;
+  }
+
+  .quote p {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .quote .attr {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-style: normal;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 44px 0;
+  }
+
+  /* RECOMMENDATIONS */
+  .rec-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rec-item:first-child { padding-top: 4px; }
+  .rec-item:last-child { border-bottom: none; padding-bottom: 4px; }
+
+  .rec-num {
+    flex: 0 0 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--egor-light);
+    color: var(--egor);
+  }
+
+  .rec-text {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text-dim);
+    padding-top: 3px;
+  }
+
+  .rec-text strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: none;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    opacity: 0.6;
+  }
+
+  /* HIGHLIGHT */
+  .highlight {
+    color: var(--egor);
+    font-weight: 500;
+  }
+
+  .highlight-green {
+    color: var(--green);
+    font-weight: 500;
+  }
+
+  /* STATUS CHIP */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  .status.done { color: var(--green); background: var(--green-light); }
+  .status.progress { color: var(--yellow); background: var(--yellow-light); }
+  .status.todo { color: var(--blue); background: var(--blue-light); }
+
+  /* ALERT */
+  .alert {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 0;
+  }
+
+  .alert + .alert {
+    margin-top: 12px;
+  }
+
+  .alert-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+
+  .alert p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  /* Links */
+  a {
+    transition: color 0.2s ease, opacity 0.2s ease;
+  }
+
+  a:hover {
+    opacity: 0.85;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Selection color */
+  ::selection {
+    background: rgba(212,169,85,0.25);
+    color: var(--text);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .header .session-tag {
+    animation: fadeIn 0.5s ease-out both;
+    animation-delay: 0.1s;
+  }
+
+  .header h1 {
+    animation: fadeUp 0.6s ease-out both;
+    animation-delay: 0.2s;
+  }
+
+  .header .meta {
+    animation: fadeIn 0.5s ease-out both;
+    animation-delay: 0.4s;
+  }
+
+  /* Scroll-triggered reveals */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+
+  .reveal-stagger.visible > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0s; }
+  .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.08s; }
+  .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.16s; }
+  .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.24s; }
+  .reveal-stagger.visible > *:nth-child(5) { transition-delay: 0.32s; }
+  .reveal-stagger.visible > *:nth-child(6) { transition-delay: 0.40s; }
+  .reveal-stagger.visible > *:nth-child(7) { transition-delay: 0.48s; }
+
+  .result-card,
+  .card {
+    transition: border-color 0.2s;
+  }
+
+  .alert {
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- NAV -->
+  <a href="../../" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);text-decoration:none;margin-bottom:24px;transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">← Все сессии</a>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="session-tag">Сессия #3</div>
+    <h1>Привычки, энергия и AI</h1>
+    <div class="meta">
+      <div class="meta-item">9 апреля, 16:00</div>
+      <div class="meta-dot"></div>
+      <div class="meta-item">Ментор: Егор</div>
+      <div class="meta-dot"></div>
+      <div class="meta-item">Менти: Анна</div>
+      <div class="meta-dot"></div>
+      <div class="meta-item">Длительность: ~1.5 часа</div>
+    </div>
+  </div>
+
+  <!-- KEY RESULTS -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="#6BAF8D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <h2>Ключевые результаты с прошлой сессии</h2>
+    </div>
+    <div class="result-grid reveal-stagger">
+      <div class="result-card">
+        <div class="result-label">Методика «Сделаю завтра»</div>
+        <div class="result-value">Применила <span class="status done">✓ done</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Декомпозировала задачи, планировала день в календаре. Понедельник–среда держится, к четвергу контроль слетает. Метод работает — нужна практика.</p>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Фидбек по выступлению</div>
+        <div class="result-value">Разобрали <span class="status done">✓ done</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Егор дал фидбек: структура правильная, канва ровная. Советы: добавить выводы, в начале рассказать «что вы получите».</p>
+        <div style="display:flex;gap:12px;margin-top:10px;">
+          <a href="feedback_ira.docx" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--accent);text-decoration:none;background:var(--accent-light);padding:4px 10px;border-radius:4px;">📝 Фидбек</a>
+          <a href="(видео выступления)?usp=drivesdk" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--accent);text-decoration:none;background:var(--accent-light);padding:4px 10px;border-radius:4px;">▶ Видео выступления</a>
+        </div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Сервисы с флоу</div>
+        <div class="result-value">Ссылки отправлены <span class="status done">✓ done</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Подборка отправлена. Бесплатные версии ограничены. Рассмотреть Mobbin — коллега Анны готова шерить аккаунт.<br><a href="https://www.saasframe.io/patterns" style="color:var(--accent);text-decoration:none;">SaaSframe</a> · <a href="https://pageflows.com/web/flows/" style="color:var(--accent);text-decoration:none;">PageFlows</a> · <a href="https://mobbin.com/discover/apps/web/latest" style="color:var(--accent);text-decoration:none;">Mobbin</a> · <a href="https://www.scrn.gallery/patterns" style="color:var(--accent);text-decoration:none;">Scrn</a> · <a href="https://www.uxarchive.app/" style="color:var(--accent);text-decoration:none;">UX Archive</a></p>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Видео про Claude Code</div>
+        <div class="result-value">Посмотрела <span class="status done">✓ done</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Вдохновилась. С регистрацией возникли сложности из-за региональных ограничений — обошлось. <a href="https://www.youtube.com/watch?v=-O6MEtleOdA&t=610s" style="color:var(--accent);text-decoration:none;">Видео →</a></p>
+      </div>
+      <div class="result-card">
+        <div class="result-label">CJM-фреймворк</div>
+        <div class="result-value">Продвинулась <span class="status progress">→ в работе</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Создала матрицу задач с гипотезами, этапами, ответственными. Еженедельный синк с продактом. Метрики берутся в работу.</p>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Контакт аналитика</div>
+        <div class="result-value">Пока не взят <span class="status todo">○ todo</span></div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Контакта ещё нет, но Анна уверена, что найти несложно. Команда уже начала заниматься разметкой сайта.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- FOCUS THEMES -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="#A890C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+      <h2>Темы сессии</h2>
+    </div>
+
+    <div class="card" style="padding:12px 20px;">
+      <div class="comp-row">
+        <div class="comp-name">Тайм-менеджмент</div>
+        <div class="comp-note">Анна применила методику «Сделаю завтра» — декомпозиция в календаре, планы на день. К среде энергия падает, контроль слетает. Обсудили: вычёркивать задачи для эндорфинов, ставить регулярные слоты на разбор почты, организовать почту по папкам с эмодзи, не делать несколько дел параллельно на встречах.</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-name">AI-инструменты</div>
+        <div class="comp-note">Анна вдохновилась после видео и разговора с другом из банка о новых ролях с AI. Возникли сложности с регистрацией в Claude из-за региональных ограничений — обсудили, что обойти можно. Егор показал свой проект на Claude (3D-визуализация) и лайфхак с транскрибацией через ChatGPT.</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-name">Презентации</div>
+        <div class="comp-note">Анна выступила на внутренней конференции — четвёртый раз, но первый, когда не переживала забыть канву. Использовала ChatGPT для структурирования. Егор дал фидбек: структура правильная, канва ровная. Появилась мечта выступать за пределами компании.</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-name">CJM-проект</div>
+        <div class="comp-note">Создала фреймворк: сырые идеи → обсуждённые задачи → матрица с гипотезами, этапами и ответственными. Еженедельный синк с продактом. Метрики пока не внедрены, но команда начала разметку. Обсудили RICE-приоритизацию задач с разработчиками.</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-name">Развитие</div>
+        <div class="comp-note">Михаил обещал мастер-класс по метрикам. Ольга (лид) предложила курс по презентациям «Продукт в дизайне» — про дизайн-менеджмент. Обсудили: курс больше для лида с подчинёнными, но полезен для саморазвития. Нужно посмотреть программу.</div>
+      </div>
+    </div>
+
+    <div class="quote">
+      <p>«В среду Михаил спросил, когда я открываю набор в свою команду. Я говорю: ну, ты как только мне дашь право, я открою.»</p>
+      <div class="attr">— Анна, про восприятие её роли в команде</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- GOALS FOR SENIOR -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="#7BA3CC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      <h2>Цели на ассессмент Senior</h2>
+    </div>
+    <div class="card">
+      <p><strong>1. CJM-проекты</strong> — <span class="status progress">→ в работе</span> — фреймворк создан, задачи разложены, еженедельный синк. Метрики берутся в работу командой.</p>
+      <p><strong>2. AI в админку</strong> — <span class="status progress">→ в работе</span> — вдохновение есть, следующий шаг — получить доступ к Claude и начать пробовать.</p>
+      <p><strong>3. Единый гайд по коммуникациям</strong> — <span class="status todo">○ todo</span> — пока не подступалась. Отложено.</p>
+    </div>
+    <div class="card">
+      <p style="color:var(--text)"><strong>Важно для ассессмента</strong></p>
+      <p>Егор подчеркнул: зафиксировать свою роль в продвижении метрик. Когда Анну будут ревьюить, важно показать, что именно она настаивала на отслеживании метрик — и добилась результата. Это аргумент уровня Senior.</p>
+      <p style="margin-top:8px"><strong>Михаил спросил, когда Анна «открывает набор в свою команду»</strong> — позитивный сигнал о восприятии её роли. Таймлайн на Senior — обсудить после отпуска.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PROMISES -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon yellow"><svg viewBox="0 0 24 24" fill="none" stroke="#C4A84E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <h2>Договорённости: кто что обещал</h2>
+    </div>
+
+    <table class="promises">
+      <thead>
+        <tr>
+          <th style="width:110px">Кто</th>
+          <th>Что</th>
+          <th style="width:100px">Статус</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>Вести рефлексию в конце дня</strong> — записывать, что драйвило и что отняло силы. Материал для разговора с Михаилом и для понимания, что мешает.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>Написать продакту перед отпуском</strong> — запросить встречу после возвращения для обсуждения прогресса по метрикам и разметке.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>Получить доступ к Claude</strong> — оформить аккаунт. Нужно для задачи с AI в админку.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>RICE-приоритизация с командой</strong> — после отпуска оценить задачи из CJM-фреймворка с разработчиками через файл для асинхронной оценки.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>Посмотреть программу курса по презентациям</strong> — «Продукт в дизайне», дизайн-менеджмент. Оценить актуальность.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-irina">Анна</span></td>
+          <td><strong>Выпросить контакт аналитика</strong> — из прошлой сессии. Пообщаться «за чашкой чая», узнать планы по метрикам.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+        <tr>
+          <td><span class="owner-tag owner-both">Оба</span></td>
+          <td><strong>Составить таймлайн на Senior</strong> — отложили до возвращения Анны из отпуска.</td>
+          <td><span class="status todo">○ todo</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="#A890C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg></div>
+      <h2>Рекомендации от Егора</h2>
+    </div>
+    <div class="card" style="padding:16px 20px;">
+      <div class="rec-item">
+        <div class="rec-num">1</div>
+        <div class="rec-text"><strong>Рефлексия в конце дня.</strong> Записывать, что драйвило и что отняло силы. Когда несколько дней нет энергии — это материал: для себя (понять, что мешает), для разговора с Михаилом (прийти не с проблемой, а с решением), для ассессмента (показать осознанность).</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">2</div>
+        <div class="rec-text"><strong>Продолжать методику «Сделаю завтра».</strong> Понедельник–среда уже работает — это отличный результат. Не бросать из-за того, что к четвергу контроль слетает. Со временем «мышца» окрепнет и будет хватать на всю неделю.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">3</div>
+        <div class="rec-text"><strong>Вычёркивать выполненные задачи.</strong> Не просто перемещать — именно вычёркивать или ставить галочку. Мозг получает эндорфины от визуального завершения. Найти шорткат, чтобы был кайф от нажатия кнопки. Оставлять список одного дня, на следующий — новый.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">4</div>
+        <div class="rec-text"><strong>Организация почты.</strong> Папки по проектам с эмодзи в названиях. Регулярные слоты на разбор (утро + вечер). Неважное — удалять/архивировать сразу. В пятницу — генеральная уборка, чтобы начать неделю с чистого листа.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">5</div>
+        <div class="rec-text"><strong>Не делать несколько дел одновременно.</strong> Когда ты на одной встрече и параллельно занимаешься другими делами — тратишь в три раза больше энергии, а не в два. Лучше заниматься чем-то одним. Между встречами оставлять 15 минут — передохнуть и переключиться.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">6</div>
+        <div class="rec-text"><strong>День без гаджетов и новостей.</strong> Попробовать провести один день без Телеграма и новостного потока. Помогает восстановить внимание и почувствовать, сколько энергии забирает фоновый информационный шум.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">7</div>
+        <div class="rec-text"><strong>Зафиксировать роль в продвижении метрик.</strong> Записать: почему метрик не было, как ты настаивала, что команда взяла в работу. Это твоя победа и аргумент уровня Senior. Пригодится на ассессменте.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">8</div>
+        <div class="rec-text"><strong>RICE-приоритизация бэклога.</strong> Файл для асинхронной оценки сложности разработчиками → среднее значение → встреча с презентацией. Делать вместе с продактом. Это тоже подсветит Senior-навыки.</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">9</div>
+        <div class="rec-text"><strong>Доступ к экспериментам.</strong> Если на рабочей машине корпоративные ограничения — экспериментировать с AI на личной машине, не пытаться обходить безопасников.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ALERT -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="#D47272" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <h2>На что обратить внимание</h2>
+    </div>
+    <div class="alert">
+      <div class="alert-title">Энергия к середине недели</div>
+      <p>Анна отметила паттерн: понедельник–среда контроль держится, к четвергу — «выдыхаюсь себя контролировать, начинается хаос». Была злость на коллег после двухчасового PBR, где никто не фиксировал решения.</p>
+      <p style="margin-top:10px">Что может помочь:</p>
+      <p style="margin-top:6px">• <strong>Рефлексия в конце дня</strong> — записывать, что забрало силы. Если паттерн повторяется — это материал для системных изменений, а не повод давить на себя.</p>
+      <p style="margin-top:4px">• <strong>Не тащить чужую ответственность, но подсветить проблему.</strong> Если на PBR никто не фиксирует решения — это не твоя задача начинать записывать (инициатива издевается над инициатором). Но можно после встречи написать организатору: «Заметила, что решения не фиксируются — может, назначим ответственного за протокол?» Если встречу ведёт руководитель — это момент проявить инициативу: предложить формат, а не взять работу на себя. Разница между Senior и исполнителем — в том, чтобы менять процесс, а не компенсировать его отсутствие.</p>
+      <p style="margin-top:4px">• <strong>Разрешать себе «пошло всё»</strong> — иногда это даёт больше сил, чем сопротивление через силу. Осознавать усталость — уже навык.</p>
+    </div>
+    <div class="alert" style="margin-top:12px;border-left-color:var(--yellow)">
+      <div class="alert-title" style="color:var(--yellow)">Отпуск и возвращение</div>
+      <p>Анна уходит в отпуск. Много задач отложено «до возвращения»: контакт аналитика, RICE-приоритизация, таймлайн на Senior, курс по презентациям , доступ к Claude.</p>
+      <p style="margin-top:10px">Чтобы не потерять контекст:</p>
+      <p style="margin-top:6px">• <strong>Написать продакту до отпуска</strong> — запросить встречу с аналитиком после возвращения. У них будет время подготовиться.</p>
+      <p style="margin-top:4px">• <strong>Всё записано в этом саммари</strong> — можно вернуться и прочитать, не нужно ничего запоминать.</p>
+      <p style="margin-top:4px">• <strong>Не планировать ничего на первый день после отпуска</strong> — дать себе день на адаптацию и разбор почты.</p>
+    </div>
+    <div class="alert" style="margin-top:12px;border-left-color:var(--green)">
+      <div class="alert-title" style="color:var(--green)">Позитивные сигналы</div>
+      <p>Много хорошего произошло за неделю:</p>
+      <p style="margin-top:6px">• Михаил спросил, когда Анна «открывает набор в команду» — он видит в ней лидера.</p>
+      <p style="margin-top:4px">• Михаил обещал мастер-класс по метрикам — это инвестиция в неё.</p>
+      <p style="margin-top:4px">• Анна впервые не переживала на выступлении — ощутимый рост.</p>
+      <p style="margin-top:4px">• Применила методику ментора при подготовке презентации — навык встроился.</p>
+      <p style="margin-top:4px">• Друг из Банка вдохновил на изучение AI — внутренняя мотивация появилась.</p>
+    </div>
+  </div>
+
+  <!-- SESSION NAV -->
+  <div style="margin-top:56px;display:flex;justify-content:space-between;align-items:flex-start;gap:24px;">
+    <div>
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:8px;">← Предыдущая</div>
+      <a href="../session-02/" style="font-size:15px;font-weight:600;color:var(--text);text-decoration:none;">Сессия #2: Компетенции и вектор</a>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:8px;">Следующая сессия</div>
+      <div style="font-size:15px;font-weight:600;color:var(--text);">17 апреля, 16:00</div>
+      <a href="https://example.zoom.us/j/0000000000" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--accent);text-decoration:none;margin-top:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>Zoom</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Подготовлено ментором</p>
+  </div>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.08,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => {
+      observer.observe(el);
+    });
+  });
+</script>
+
+</body>
+</html>
